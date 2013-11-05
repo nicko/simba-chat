@@ -1,0 +1,16 @@
+- Add login page using bootstrap: http://getbootstrap.com/examples/signin/
+- Add main chat screen using bootstrap http://getbootstrap.com/getting-started/
+- Chat history (last 100 entries)
+- Avatar
+- Store username in a cookie
+- Add Jade layout properly
+- Deploy
+- Customize bootstrap skin maybe?
+- corelation ids for async messages (timestamp I guess)
+- Emoticons with emoji
+- Send pictures
+- Send rich text (formatted code to have a rofl at)
+- SSL
+- Group / separate rooms
+- Private chat
+- COntrol messages for room management

@@ -1,0 +1,68 @@
+doctype 5
+html
+   head
+      title SimbaChat
+      script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+      script(src="/socket.io/socket.io.js")
+      script(src="client.js")
+      script(src="theme/js/bootstrap.min.js")
+      link(rel='stylesheet', href='theme/css/bootstrap.min.css')
+      link(rel='stylesheet', href='theme/css/simba.css')
+
+   body
+      div.container
+         header
+            h1 Simba
+         form#form-name
+            h2.form-signin-heading Who are you?
+            input.form-control(type='text')#input-name
+            button.btn.btn-lg.btn-primary.btn-block#submit Enter
+         div#chat-history
+         div#chat-footer
+            form#form-chat
+               input(type='text')#input-message
+               button#input-message-submit Send
+
+      script
+         $(function() {
+            var client = new Client();
+            client.setMessageHandler(messageHandler);
+            client.connect();
+
+            $("#chat-footer").hide();
+            $("#form-name").on("submit", setName);
+            $("#form-chat").on("submit", sendMessage);
+            $("#input-message").change(updateMessageStatus);
+
+            function setName(e) {
+               var val = $("#input-name").val();
+               if (val == "") return false;
+               client.setName(val);
+               $("#chat-footer").show();
+               $("#form-name").hide();
+               return false;
+            }
+
+            function sendMessage(e) {
+               var val = $("#input-message").val();
+               if (val == "") return false;
+               console.log("sending", val)
+               client.sendMessage(val);
+               $("#input-message").val("");
+               return false;
+            }
+
+            function messageHandler(message, userId) {
+               console.log("received", message, userId)
+               $("#chat-history").append("<div class=\"message jumbotron\"><p>" + userId + " : " + message + "</p></div>")
+            }
+
+            function updateMessageStatus() {
+               var val = $("#input-message").val();
+               if (val == "") {
+                  console.log("button should be disabled")
+               } else {
+                  console.log("button should be enabled")
+               }
+            }
+         })
