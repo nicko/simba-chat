@@ -17,17 +17,13 @@ html
             input(type='text')#input-name.form-control
             button.btn.btn-lg.btn-primary.btn-block#submit Enter
          div.row
-            div.col-xs-12.col-md-3#participants-list
-            div.col-xs-12.col-md-9#chat-history
+            div.col-xs-12.col-md-12#chat-history
          div.row
             div.col-xs-12#chat-footer
-            form#form-chat
-               input(type='text', placeholder="Say something useful for a change")#input-message.form-control
-               button#input-message-submit.btn.btn-primary.btn-large Send
-
-         div.input-group
-            input(type="text").form-control
-            span.input-group-btn
-            button(type="button").btn.btn-default Go!
+               form#form-chat
+                  div.input-group
+                     input(type="text", placeholder="Say something useful for a change").form-control#input-message
+                     span.input-group-btn
+                        button(type="submit").btn.btn-default#input-message-submit Go!
 
       script(src="client.js")

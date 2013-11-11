@@ -41,10 +41,23 @@ Client.prototype.setMessageHandler = function(value) {
 	this.messageHandler = value;
 }
 
+Client.prototype.isSelf = function(name) {
+	return this.name == name;
+}
+
+var Utils = {
+	format: function(template, data) {
+		return template.replace(/{([^\}]+)}/g, function(unused, match) {
+			return data[match];
+		})
+	}
+};
+
 
 // App
 
 $(function() {
+	var messageTemplate = "<div class=\"{className}\"><p>{user}: {message}</p></div>";
 	var client = new Client();
 	client.setMessageHandler(messageHandler);
 	client.connect();
@@ -74,8 +87,17 @@ $(function() {
 
 	function messageHandler(message, userId) {
 		console.log("received", message, userId)
-		$("#chat-history").append("<div class=\"message\"><p>" 
-			+ userId + " : " + message + "</p></div>")
+		var data = {
+			message: message
+		};
+		if (client.isSelf(userId)) {
+			data.className = "message-self";
+			data.user = "You";
+		} else {
+			data.className = "message";
+			data.user = userId;
+		}
+		$("#chat-history").append(Utils.format(messageTemplate, data));
 	}
 
 	function updateMessageStatus() {

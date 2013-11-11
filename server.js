@@ -33,10 +33,13 @@ io.sockets.on("connection", function(socket) {
 
   socket.on("message", function(message) {
     socket.get("name", function(err, name) {
-      var update = { "message": message, "userId": name }
+      var update = { "message": message, "userId": name };
       history.append(update);
-      socket.broadcast.emit("message", update)
-      console.log("user " + name + " send this: " + message)
+      // Send to everyone
+      socket.broadcast.emit("message", update);
+      // Send to yourself
+      socket.emit("message", update);
+      console.log("user " + name + " send this: " + message);
     })
   })
 })

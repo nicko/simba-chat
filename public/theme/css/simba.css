@@ -8,25 +8,22 @@ body {
 	margin: 0 auto;
 }
 
-#input-message {
-	width: 870px;
-	display: inline-block;
-}
-
-#input-message-submit {
-	float: right;
-	display: inline-block;
-}
-
-.message {
+.message,
+.message-self {
 	padding: 10px;
 	border-radius: 6px;
 	background-color: rgb(238, 238, 238);
 	margin-bottom: 10px;
 }
 
-.message p {
+.message p,
+.message-self p {
 	margin: 0;
+}
+
+.message-self {
+	background-color: rgb(217, 221, 255);
+	text-align: right;
 }
 
 #participants-list {
