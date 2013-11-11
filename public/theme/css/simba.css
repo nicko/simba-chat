@@ -7,3 +7,31 @@ body {
 	width: 300px;
 	margin: 0 auto;
 }
+
+#input-message {
+	width: 870px;
+	display: inline-block;
+}
+
+#input-message-submit {
+	float: right;
+	display: inline-block;
+}
+
+.message {
+	padding: 10px;
+	border-radius: 6px;
+	background-color: rgb(238, 238, 238);
+	margin-bottom: 10px;
+}
+
+.message p {
+	margin: 0;
+}
+
+#participants-list {
+	padding: 10px;
+	border-radius: 6px;
+	background-color: rgb(238, 238, 238);
+	margin-bottom: 10px;	
+}

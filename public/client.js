@@ -1,3 +1,5 @@
+// Types
+
 var Client = function() {
 	this.socket = null;
 	this.messageHandler = null;
@@ -38,3 +40,50 @@ Client.prototype.sendMessage = function(text) {
 Client.prototype.setMessageHandler = function(value) {
 	this.messageHandler = value;
 }
+
+
+// App
+
+$(function() {
+	var client = new Client();
+	client.setMessageHandler(messageHandler);
+	client.connect();
+
+	$("#chat-footer").hide();
+	$("#form-name").on("submit", setName);
+	$("#form-chat").on("submit", sendMessage);
+	$("#input-message").change(updateMessageStatus);
+
+	function setName(e) {
+		var val = $("#input-name").val();
+		if (val == "") return false;
+		client.setName(val);
+		$("#chat-footer").show();
+		$("#form-name").hide();
+		return false;
+	}
+
+	function sendMessage(e) {
+		var val = $("#input-message").val();
+		if (val == "") return false;
+		console.log("sending", val)
+		client.sendMessage(val);
+		$("#input-message").val("");
+		return false;
+	}
+
+	function messageHandler(message, userId) {
+		console.log("received", message, userId)
+		$("#chat-history").append("<div class=\"message\"><p>" 
+			+ userId + " : " + message + "</p></div>")
+	}
+
+	function updateMessageStatus() {
+		var val = $("#input-message").val();
+		if (val == "") {
+			console.log("button should be disabled")
+		} else {
+		  console.log("button should be enabled")
+		}
+	}
+});
