@@ -14,7 +14,7 @@ var services = angular.module('SimbaChat.services', []);
 // User.sessionId
 // Session.user
 // Session.isAuthenticated
-// Session.discussionRegistry
+// Session.discussions
 // Message.text
 // Message.user (who created it)
 // Message.discussion (destination)
@@ -83,7 +83,7 @@ services.service("Session", ["$rootScope", "Endpoint", function($rootScope, endp
 services.service("Chat", ["$rootScope", "Session", "Endpoint", function($rootScope, session, endpoint) {
   var _this = this;
 
-  this.discussionRegistry = {};
+  this.discussions = {};
   this.currentDiscussion = "global";
 
   endpoint.on("discussion", function(discussion) {

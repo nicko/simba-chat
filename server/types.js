@@ -27,7 +27,6 @@ MessageDispatcher.prototype.dispatchAll = function(users, messages) {
 };
 
 
-// Server needs to keep track of discussionRegistry.
 var Discussion = function(id, messageDispatcher) {
   this.id = id;
   this.messageDispatcher = messageDispatcher;

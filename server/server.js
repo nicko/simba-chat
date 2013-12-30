@@ -24,31 +24,31 @@ app.get("/", function(req, res) {
 
 var expressInstance = app.listen(3000);
 
-var discussionRegistry = {};
-var socketRegistry = {};
-var messageDispatcher = new types.MessageDispatcher(socketRegistry);
+var discussionById = {};
+var socketByUserId = {};
+var messageDispatcher = new types.MessageDispatcher(socketByUserId);
 var defaultDiscussion = new types.Discussion("global", messageDispatcher);
 defaultDiscussion.addMessage({ text: "I am an historical message", userId: "cats", discussionId: "global", time: new Date().getTime() })
-discussionRegistry["global"] = defaultDiscussion;
+discussionById["global"] = defaultDiscussion;
 
 var io = require("socket.io").listen(expressInstance);
 io.sockets.on("connection", function(socket) {
 
   socket.on("init", function(userId) {
-    socketRegistry[userId] = socket;
+    socketByUserId[userId] = socket;
     socket.set("name", userId);
   });
 
   socket.on("createDiscussion", function(id) {
-    discussionRegistry[id] = new types.Discussion(id, messageDispatcher);
+    discussionById[id] = new types.Discussion(id, messageDispatcher);
   });
 
   socket.on("joinDiscussion", function(discussionId, userId) {
-    discussionRegistry[discussionId].addMember(userId);
+    discussionById[discussionId].addMember(userId);
   });
 
   socket.on("send", function(message) {
-    var disc = discussionRegistry[message.discussionId];
+    var disc = discussionById[message.discussionId];
     if (!disc) return;
     disc.addMessage(message);
   });
