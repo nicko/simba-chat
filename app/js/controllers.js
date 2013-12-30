@@ -5,21 +5,50 @@
 angular.module('SimbaChat.controllers', []).
   controller('Discussion', [
     "$scope",
+    "$location",
     "Chat",
-    function($scope, chatService) {
-      // { name: "Nick", text: "Cats", time: new Date() }
+    "Session",
+    function($scope, $location, chatService, session) {
+
       $scope.messages = [];
-      for (var i=0; i < 100; i++)
-      {
-        $scope.messages.push(
-          {
-            name: i % 2 == 0 ? "Nick" : "Yun",
-            text: "garble garble parp parp",
-            time: new Date().getTime()
-          }
-        );
+
+      $scope.text = "";
+
+      $scope.send = function() {
+        console.log("Sending", $scope.text);
+        $scope.discussion.send($scope.text);
+        $scope.text = "";
+      };
+
+      $scope.isSendDisabled = function() {
+        return $scope.text.length == 0;
+      };
+
+      $scope.discussion = null;
+
+      // Move to login screen when it's done so that Login takes care of bootstrapping us.
+      function joinRoom(id) {
+        $scope.discussion = chatService.joinDiscussion(id);
+        // Use RxJS here to respond to incoming data channel.on()
+        $scope.discussion.on(function(message) {
+          console.log("Message in: " + message.text + " " + message.userId);
+          $scope.messages.push(message);
+        });
       }
 
-      chatService.connect();
+      // Initialize
+      if (session.isAuthenticated) {
+        joinRoom(chatService.currentDiscussion);
+      } else {
+        $scope.$on("Session::isAuthenticatedChanged", function(event, isAuthenticated) {
+          if (isAuthenticated) {
+            joinRoom(chatService.currentDiscussion);
+          }
+        });
+        console.log($location.search().name);
+        session.authenticate($location.search().name || "cats", "blah");
+      }
+
+
     }
   ]);

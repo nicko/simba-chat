@@ -1,7 +1,8 @@
 var express = require("express")
   , app = express()
   , ejs = require("ejs")
-  , history = require("./chat-history");
+  , history = require("./chat-history")
+  , types = require("./types");
 
 // TODO: Work out a nicer way to manage the basic index page.
 app.engine('html', require('ejs').renderFile);
@@ -23,30 +24,33 @@ app.get("/", function(req, res) {
 
 var expressInstance = app.listen(3000);
 
+var discussionRegistry = {};
+var socketRegistry = {};
+var messageDispatcher = new types.MessageDispatcher(socketRegistry);
+var defaultDiscussion = new types.Discussion("global", messageDispatcher);
+defaultDiscussion.addMessage({ text: "I am an historical message", userId: "cats", discussionId: "global", time: new Date().getTime() })
+discussionRegistry["global"] = defaultDiscussion;
+
 var io = require("socket.io").listen(expressInstance);
-
 io.sockets.on("connection", function(socket) {
-  socket.on("setName", function(data) {
-    console.log("setName", data);
-    socket.set("name", data)
+
+  socket.on("init", function(userId) {
+    socketRegistry[userId] = socket;
+    socket.set("name", userId);
   });
 
-  socket.on("getHistory", function() {
-    socket.get("name", function(err, name) {
-      console.log("History requested by", name);
-      socket.emit("history", history.getLast(100));
-    })
+  socket.on("createDiscussion", function(id) {
+    discussionRegistry[id] = new types.Discussion(id, messageDispatcher);
   });
 
-  socket.on("message", function(message) {
-    socket.get("name", function(err, name) {
-      var update = { "message": message, "userId": name };
-      history.append(update);
-      // Send to everyone
-      socket.broadcast.emit("message", update);
-      // Send to yourself
-      socket.emit("message", update);
-      console.log("user " + name + " send this: " + message);
-    })
-  })
-})
+  socket.on("joinDiscussion", function(discussionId, userId) {
+    discussionRegistry[discussionId].addMember(userId);
+  });
+
+  socket.on("send", function(message) {
+    var disc = discussionRegistry[message.discussionId];
+    if (!disc) return;
+    disc.addMessage(message);
+  });
+});
+
